@@ -1,0 +1,19 @@
+# Key material — never commit (build guide §3)
+frost/
+*.toml
+*.age
+wallets/
+work/
+.env
+.env.*
+!.env.example
+*.sqlite
+*.sqlite-*
+data/
+
+# Node / build
+node_modules/
+dist/
+coverage/
+*.log
+.DS_Store
