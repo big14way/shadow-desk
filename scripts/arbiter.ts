@@ -34,8 +34,13 @@ switch (cmd) {
       process.exit(2);
     }
     const plain = sodium.crypto_box_seal_open(readFileSync(file), sodium.from_base64(pk, B64), sodium.from_base64(sk, B64));
-    if (out) writeFileSync(out, plain, { mode: 0o600 });
-    else process.stdout.write(plain);
+    // The browser prepends one JSON line with the original file name and type (src/web/seal.ts).
+    const nl = plain.indexOf(10);
+    const meta = JSON.parse(new TextDecoder().decode(plain.subarray(0, nl))) as { name: string; type: string };
+    const body = plain.subarray(nl + 1);
+    console.error(`original file: ${meta.name} (${meta.type || 'unknown type'}, ${body.length} bytes)`);
+    if (out) writeFileSync(out, body, { mode: 0o600 });
+    else process.stdout.write(body);
     break;
   }
   default:
