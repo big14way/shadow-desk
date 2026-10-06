@@ -1,0 +1,7 @@
+SIGHASH: 7d48149e6ae74a301bc74c7e1a5af48c52c0d20550a086899db07555e73f53a5
+Randomizer #3 (ironwood): c8288c6d932fe31bdfacb6394fa22235a23331d00f95a5ea8f3ea1938bb60136
+Input hex-encoded signature #3 (ironwood): 
+Error: sign_ironwood_with (apply): Apply(InvalidExternalSignature)
+
+Location:
+    zcash-sign/src/sign.rs:152:22

@@ -1,0 +1,5 @@
+Exporting this information:
+Name: arbiter
+Public Key: 431a2b9b0f325f73ae1f6878a4c0425e23121ede337740fef5f9ed3d1ee3e149
+Check if contains the expected information. If it does, copy the following contact string and send to other participants you want to use FROST with:
+zffrost1qyqqwctjvf5hgetjypp352umpue97uawra583fxqgf0zxys7mcehws877hu760g7u0s5jqsszxx

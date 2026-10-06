@@ -1,0 +1,9 @@
+Group "trade-T1"
+Public key bbe261cce497936c8eb4f48ad194c78b096a66608ba941defe9631e811d42c39
+Server URL: localhost:2744
+Threshold: 2
+Participants: 3
+	arbiter	(431a2b9b0f325f73ae1f6878a4c0425e23121ede337740fef5f9ed3d1ee3e149)
+	seller-T1	(d29a43c72bffaa73ab3c0d61a142b2ee58b8d40cfd4120b6445c7ce9c0f89e5f)
+		(1a50f0821c331bd5cbde0549a7784289014b2fe285c694d476e66c8ff3d1376e)
+

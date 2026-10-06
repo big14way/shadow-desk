@@ -1,0 +1,9 @@
+# Exact tool builds Shadow Desk was developed and tested against (build guide §4).
+# Rebuild exactly these with:
+#   cargo install --git https://github.com/ZcashFoundation/frost-tools.git --rev 06c0dbdb1bac9b99cd255e74ba2f387c295e660 --locked frostd frost-client zcash-sign
+#   cargo install --git https://github.com/zcash/zcash-devtool.git --rev 5a26ee854e634a4e88d1d79dab13f8fbb1eac6b8 --locked
+
+frost-tools    06c0dbdb1bac9b99cd255e74ba2f387c295e660   2026-08-12   frostd, frost-client, zcash-sign (includes PR #593: Ironwood v6 signing)
+zcash-devtool  5a26ee854e634a4e88d1d79dab13f8fbb1eac6b8   2026-08-28
+rustc          1.97.0
+node           >= 22.13 (developed on 26.8.1)

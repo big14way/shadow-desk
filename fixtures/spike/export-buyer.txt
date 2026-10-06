@@ -1,0 +1,5 @@
+Exporting this information:
+Name: buyer-T1
+Public Key: 1a50f0821c331bd5cbde0549a7784289014b2fe285c694d476e66c8ff3d1376e
+Check if contains the expected information. If it does, copy the following contact string and send to other participants you want to use FROST with:
+zffrost1qyqqscn409jhyt25xysp558ssgwrxx74e00q2jd80ppgjq2t9l3gt35563mwvmy070gnwmswegzhq
