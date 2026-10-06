@@ -24,5 +24,9 @@
     "onlyBuiltDependencies": [
       "esbuild"
     ]
+  },
+  "dependencies": {
+    "@noble/hashes": "^2.4.0",
+    "@scure/base": "^2.4.0"
   }
 }
