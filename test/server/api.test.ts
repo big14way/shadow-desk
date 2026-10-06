@@ -428,3 +428,13 @@ describe('http', () => {
     expect(() => loadConfig({ NODE_ENV: 'production', DESK_DRY_RUN: '1' } as NodeJS.ProcessEnv)).toThrow(/Refusing/);
   });
 });
+
+describe('web UI serving', () => {
+  it('rejects malformed and traversal paths', async () => {
+    const s = setup({ WEB_DIR: new URL('../../fixtures/', import.meta.url).pathname });
+    expect((await s.app.request('/%E0%A4%A')).status).toBe(400);
+    const r = await s.app.request('/../package.json');
+    expect(await r.text()).not.toContain('"name": "shadow-desk"');
+    expect((await s.app.request('/api/nope')).status).toBe(404);
+  });
+});

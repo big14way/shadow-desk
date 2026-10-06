@@ -242,7 +242,12 @@ export function createApp(desk: Desk, cfg: Config) {
   // ------------------------------------------------------------- the web UI (single-page app)
   const root = normalize(cfg.webDir);
   app.get('*', async (c) => {
-    const rel = decodeURIComponent(new URL(c.req.url).pathname);
+    let rel: string;
+    try {
+      rel = decodeURIComponent(new URL(c.req.url).pathname);
+    } catch {
+      return c.text('bad path', 400);
+    }
     const file = normalize(join(root, rel));
     const inside = file === root || file.startsWith(root + sep);
     const candidate = inside && extname(file) ? file : join(root, 'index.html');
