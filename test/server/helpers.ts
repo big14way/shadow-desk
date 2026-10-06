@@ -34,7 +34,7 @@ export class FakeZwatch implements Zwatch {
   }
 }
 
-export function setup(env: Record<string, string> = {}) {
+export function setup(env: Record<string, string> = {}, opts: { zwatch?: (repo: Repo, now: () => number) => Zwatch } = {}) {
   const clock = { t: Date.UTC(2026, 9, 6, 12) };
   const cfg: Config = loadConfig({
     NODE_ENV: 'test',
@@ -45,9 +45,12 @@ export function setup(env: Record<string, string> = {}) {
     ...env,
   } as NodeJS.ProcessEnv);
   const repo = new Repo(openDb(':memory:'));
-  const zwatch = new FakeZwatch();
+  const fake = new FakeZwatch();
+  const zwatch = fake;
+  const watcher = opts.zwatch ? opts.zwatch(repo, () => clock.t) : fake;
   const purged: string[] = [];
-  const desk = new Desk(repo, cfg, zwatch, () => clock.t, () => 0.5, { onPurge: (ids) => purged.push(...ids) });
+  const hooks: { onPurge: (ids: string[]) => void; onChange?: () => void } = { onPurge: (ids) => purged.push(...ids) };
+  const desk = new Desk(repo, cfg, watcher, () => clock.t, () => 0.5, hooks);
   const app = createApp(desk, cfg);
 
   const call = async (method: string, path: string, opts: { token?: string; body?: unknown } = {}) => {
@@ -69,5 +72,5 @@ export function setup(env: Record<string, string> = {}) {
     return { status: res.status, json, headers: res.headers };
   };
 
-  return { cfg, repo, desk, zwatch, app, clock, call, purged };
+  return { cfg, repo, desk, zwatch, app, clock, call, purged, hooks };
 }

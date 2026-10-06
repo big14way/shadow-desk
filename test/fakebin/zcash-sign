@@ -1,0 +1,26 @@
+#!/usr/bin/env node
+import { writeFileSync } from 'node:fs';
+import { arg, failIf, logCall, readLine } from './_common.mjs';
+
+const argv = process.argv.slice(2);
+logCall('zcash-sign', argv);
+failIf('zcash-sign');
+const spends = Number(process.env.FAKE_SPENDS ?? 1);
+console.log(`SIGHASH: ${'a'.repeat(64)}`);
+const sigs = [];
+for (let i = 0; i < spends; i++) {
+  console.log(`Randomizer #${i} (ironwood): ${String(i).repeat(64)}`);
+  console.log(`Input hex-encoded signature #${i} (ironwood): `);
+  const line = (await readLine()).trim();
+  if (!/^[0-9a-f]{128}$/.test(line)) {
+    console.error(`Error: signature #${i} must be 64 bytes`);
+    process.exit(1);
+  }
+  sigs.push(line);
+  process.stdin.removeAllListeners('data');
+}
+const out = arg(argv, '-o');
+writeFileSync(out, 'signed:' + sigs.join(','));
+console.log(`Tx written to ${out}`);
+
+process.exit(0);

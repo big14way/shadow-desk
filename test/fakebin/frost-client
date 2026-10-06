@@ -1,0 +1,67 @@
+#!/usr/bin/env node
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { arg, failIf, logCall, readLine, readState, sleep, writeState } from './_common.mjs';
+
+const argv = process.argv.slice(2);
+logCall('frost-client', argv);
+const cmd = argv[0];
+const fixtures = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'fixtures', 'spike');
+const GROUP = 'bbe261cce497936c8eb4f48ad194c78b096a66608ba941defe9631e811d42c39';
+
+switch (cmd) {
+  case 'init':
+    writeFileSync(arg(argv, '-c'), 'fake config');
+    break;
+  case 'export':
+    process.stderr.write(readFileSync(join(fixtures, 'export-arbiter.txt'), 'utf8'));
+    break;
+  case 'contacts':
+    process.stderr.write(readState('contacts'));
+    break;
+  case 'import':
+    writeState('contacts', readState('contacts') + `Name: imported\nPublic Key: ${'1'.repeat(64)}\n${argv[1]}\n\n`);
+    process.stderr.write('Imported this contact:\n');
+    break;
+  case 'dkg': {
+    failIf('dkg');
+    process.stderr.write('Logging in...\nCreating DKG session...\nGetting session info...\nWaiting for other participants to send their Round 1 Packages.....\n');
+    await sleep(50);
+    writeState('groups', `Group "${arg(argv, '-d')}"\nPublic key ${GROUP}\nServer URL: ${arg(argv, '-s')}\nThreshold: 2\nParticipants: 3\n\n`);
+    process.stderr.write(`Group created; information written to ${arg(argv, '-c')}\n`);
+    break;
+  }
+  case 'groups':
+    process.stderr.write(readState('groups'));
+    break;
+  case 'coordinator': {
+    failIf('coordinator');
+    const message = readFileSync(arg(argv, '-m')).toString('hex');
+    writeState('message', message);
+    process.stderr.write(`Reading message from ${arg(argv, '-m')}...\nLogging in...\nCreating signing session...\nWaiting for participants to send their commitments.....\n`);
+    // When the arbiter signs too, wait for its participant to answer.
+    for (let i = 0; i < 100 && process.env.FAKE_WAIT_PARTICIPANT && !existsSync(join(process.env.FAKE_STATE_DIR, 'answered')); i++) await sleep(20);
+    if (readState('answered') === 'n') process.exit(1);
+    writeFileSync(arg(argv, '-o'), Buffer.alloc(64, 0xab));
+    process.stderr.write(`Raw signature written to ${arg(argv, '-o')}\n`);
+    break;
+  }
+  case 'participant': {
+    const shown = process.env.FAKE_TAMPER ? 'b'.repeat(64) : readState('message');
+    console.log(`Logging in...\nJoining signing session...\nSigning package received\nMessage to be signed (hex-encoded):\n${shown}\nDo you want to sign it? (y/n)`);
+    const answer = (await readLine()).trim();
+    writeState('answered', answer);
+    if (answer !== 'y') {
+      console.error('Error: signing cancelled');
+      process.exit(1);
+    }
+    console.log('Sending signature share to coordinator...\nDone');
+    break;
+  }
+  default:
+    console.error(`fake frost-client: unsupported ${cmd}`);
+    process.exit(2);
+}
+
+process.exit(0);

@@ -1,0 +1,42 @@
+#!/usr/bin/env node
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { arg, failIf, logCall } from './_common.mjs';
+
+const argv = process.argv.slice(2);
+logCall('zcash-devtool', argv);
+const [group, ...rest] = argv;
+const sub = rest.find((a) => !a.startsWith('-') && a !== arg(argv, '-w'));
+const TXID = 'f'.repeat(64);
+
+if (group === 'wallet' && sub === 'init-fvk') {
+  failIf('init');
+  mkdirSync(arg(argv, '-w'), { recursive: true });
+} else if (group === 'wallet' && sub === 'sync') {
+  failIf('sync');
+} else if (group === 'pczt' && sub === 'create') {
+  failIf('create');
+  writeFileSync(arg(argv, '--output'), JSON.stringify({ to: arg(argv, '--address'), value: arg(argv, '--value') }));
+} else if (group === 'pczt' && sub === 'inspect') {
+  const file = argv[argv.length - 1];
+  const body = readFileSync(file, 'utf8');
+  if (body.startsWith('{')) {
+    const { to, value } = JSON.parse(body);
+    const shownTo = process.env.FAKE_INSPECT_TO ?? to;
+    console.log(`2 Ironwood actions:\n- 0:\n  - Spend: 1010000 zatoshis\n  - Output: ${value} zatoshis to ${shownTo}\n- 1:\n  - Output: Zero value (likely a dummy)\n\nTxID: ${'e'.repeat(64)}\nVersion: V6`);
+  } else {
+    console.log(`TxID: ${TXID}\nVersion: V6`);
+  }
+} else if (group === 'pczt' && sub === 'prove') {
+  failIf('prove');
+  writeFileSync(arg(argv, '--output'), 'proven');
+} else if (group === 'pczt' && sub === 'combine') {
+  failIf('combine');
+  writeFileSync(arg(argv, '-o'), 'combined');
+} else if (group === 'pczt' && sub === 'send') {
+  console.log('Sending transaction...');
+  failIf('send');
+  console.log(TXID);
+} else {
+  console.error(`fake zcash-devtool: unsupported ${argv.join(' ')}`);
+  process.exit(2);
+}

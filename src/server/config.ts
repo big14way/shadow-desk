@@ -40,7 +40,8 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
   if (dryRun && production) {
     throw new Error('Refusing to start: DESK_DRY_RUN=1 is not allowed with NODE_ENV=production.');
   }
-  const network = (env.ZCASH_NETWORK ?? 'main') as Network;
+  // Dry run uses Testnet encodings, so no demo address is ever a valid Mainnet address.
+  const network = (env.ZCASH_NETWORK ?? (dryRun ? 'test' : 'main')) as Network;
   if (network !== 'main' && network !== 'test') throw new Error('ZCASH_NETWORK must be main or test');
 
   const dataDir = resolve(env.DATA_DIR ?? 'data');
