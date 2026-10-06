@@ -32,6 +32,7 @@ const ALLOWED: [TradeState, TradeEvent, Actor, TradeState][] = [
   ['NEEDS_ATTENTION', 'resolve_seller', 'arbiter', 'REFUNDING'],
   ['CANCELLED', 'resolve_seller', 'arbiter', 'REFUNDING'],
   ['NEEDS_ATTENTION', 'accept_funding', 'arbiter', 'FUNDED'],
+  ['CANCELLED', 'late_funds', 'system', 'REFUNDING'],
   ['RELEASING', 'settled', 'system', 'RELEASED'],
   ['REFUNDING', 'settled', 'system', 'REFUNDED'],
   ['TAKEN', 'timeout', 'system', 'CANCELLED'],
@@ -68,12 +69,13 @@ describe('state machine', () => {
     for (const s of ['FIAT_SENT', 'DISPUTE', 'RELEASING', 'RELEASED'] as TradeState[]) expect(canTransition(s, 'cancel', 'buyer')).toBe(false);
   });
 
-  it('nothing leaves an end state except an arbiter refund of late funds', () => {
+  it('nothing leaves an end state except a refund of late funds', () => {
     for (const e of Object.keys(RULES) as TradeEvent[]) {
       for (const a of ACTORS) {
         expect(canTransition('RELEASED', e, a)).toBe(false);
         expect(canTransition('REFUNDED', e, a)).toBe(false);
-        if (!(e === 'resolve_seller' && a === 'arbiter')) expect(canTransition('CANCELLED', e, a)).toBe(false);
+        const lateRefund = (e === 'resolve_seller' && a === 'arbiter') || (e === 'late_funds' && a === 'system');
+        if (!lateRefund) expect(canTransition('CANCELLED', e, a)).toBe(false);
       }
     }
   });

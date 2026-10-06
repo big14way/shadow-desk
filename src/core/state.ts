@@ -58,6 +58,8 @@ export const RULES = {
     // Late funds after a cancel, or a multi-note escrow: the arbiter and seller send it back.
     { from: ['NEEDS_ATTENTION', 'CANCELLED'], to: 'REFUNDING', by: ['arbiter'], settle: 'refund' },
   ],
+  /** Funds reached the escrow of a cancelled trade: send them back to the seller. */
+  late_funds: [{ from: ['CANCELLED'], to: 'REFUNDING', by: ['system'], settle: 'refund' }],
   /** The arbiter checked a multi-note escrow and accepts it. */
   accept_funding: [{ from: ['NEEDS_ATTENTION'], to: 'FUNDED', by: ['arbiter'] }],
   settled: [
