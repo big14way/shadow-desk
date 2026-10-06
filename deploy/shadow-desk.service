@@ -1,0 +1,19 @@
+[Unit]
+Description=Shadow Desk (API, web UI, ticker, signing worker)
+After=network-online.target frostd.service
+
+[Service]
+User=shadowdesk
+WorkingDirectory=/opt/shadow-desk
+EnvironmentFile=/etc/shadow-desk.env
+ExecStart=/usr/bin/env pnpm start
+Restart=always
+UMask=0077
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/var/lib/shadow-desk
+ProtectHome=yes
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target
