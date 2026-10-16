@@ -39,7 +39,7 @@ under `~/sd/frost-local/out`. The copies in `fixtures/spike/` came from this scr
 - With several spends, zcash-sign prompts for one signature per spend, one at a time; the worker runs one FROST
   session per prompt.
 
-## Part 2 — Mainnet, scripted (~0.0024 ZEC in flight, ~0.0004 ZEC in fees)
+## Part 2 — Mainnet, scripted (~0.0024 ZEC in flight, 0.0004–0.0006 ZEC in fees)
 
 `scripts/spike-mainnet.ts` runs steps 5–10 with the desk's own worker code (`settle()`): it creates the PCZT, checks
 it, runs one FROST session per spend (the buyer and seller participants sign only the SIGHASH zcash-sign computed),
@@ -53,7 +53,9 @@ pnpm spike:mainnet settle T1 --to <your u1 address>                          # b
 pnpm spike:mainnet settle T2 --to <your u1 address> --kind dispute-release   # arbiter + buyer
 ```
 
-Each release pays 0.001 ZEC back to `--to` and the escrow pays the 0.0001 ZEC fee. The txids are saved as
+Each release pays 0.001 ZEC back to `--to` and the escrow pays the 0.0001 ZEC fee. Funding costs 0.0001 ZEC per
+escrow from a wallet whose funds are already in Ironwood, and 0.0002 ZEC from funds still in the old Orchard pool
+(ZIP 317 counts both bundles). zcash-devtool spends received funds after 10 confirmations, about 12.5 minutes. The txids are saved as
 `~/sd/<T>/out/txid-<kind>.txt`.
 
 ## Part 2 — Mainnet, by hand (~0.003 ZEC)
