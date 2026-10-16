@@ -16,6 +16,7 @@
     "demo": "vite build && DESK_DRY_RUN=1 tsx src/server/main.ts",
     "arbiter": "tsx scripts/arbiter.ts",
     "spike": "bash scripts/spike-local.sh",
+    "spike:mainnet": "tsx scripts/spike-mainnet.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit"

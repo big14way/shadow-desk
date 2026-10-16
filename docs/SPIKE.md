@@ -39,7 +39,24 @@ under `~/sd/frost-local/out`. The copies in `fixtures/spike/` came from this scr
 - With several spends, zcash-sign prompts for one signature per spend, one at a time; the worker runs one FROST
   session per prompt.
 
-## Part 2 — Mainnet (manual, ~0.003 ZEC)
+## Part 2 — Mainnet, scripted (~0.0024 ZEC in flight, ~0.0004 ZEC in fees)
+
+`scripts/spike-mainnet.ts` runs steps 5–10 with the desk's own worker code (`settle()`): it creates the PCZT, checks
+it, runs one FROST session per spend (the buyer and seller participants sign only the SIGHASH zcash-sign computed),
+proves, combines and broadcasts. Every intermediate file is kept, so a failed run resumes where it stopped.
+
+```bash
+scripts/spike-local.sh ~/sd/T1 && scripts/spike-local.sh ~/sd/T2   # two fresh DKGs and escrow addresses
+pnpm spike:mainnet fund                     # both addresses, ZIP 321 links and QR codes: send 0.0011 ZEC to each
+pnpm spike:mainnet status T1                # repeat until 0.0011 ZEC is spendable
+pnpm spike:mainnet settle T1 --to <your u1 address>                          # buyer + seller
+pnpm spike:mainnet settle T2 --to <your u1 address> --kind dispute-release   # arbiter + buyer
+```
+
+Each release pays 0.001 ZEC back to `--to` and the escrow pays the 0.0001 ZEC fee. The txids are saved as
+`~/sd/<T>/out/txid-<kind>.txt`.
+
+## Part 2 — Mainnet, by hand (~0.003 ZEC)
 
 Run from the directory part 1 used (it holds `buyer.toml`, `seller.toml`, `arbiter.toml` and the CA).
 `export SSL_CERT_FILE=$PWD/ca.pem`, and start frostd again if it isn't running:

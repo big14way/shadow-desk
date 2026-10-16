@@ -19,3 +19,18 @@ confirmations. More than one output → `NEEDS_ATTENTION`. One confirmed output 
 **Not used:** deleting accounts. A purged trade's zwatch account is left for zwatch's own retention.
 
 In dry run (`DESK_DRY_RUN=1`) a mock replaces zwatch (`src/server/dryrun.ts`).
+
+## Checked against Ghostpass zwatch (335c9fc, 17 Oct 2026)
+
+The desk's client accepts every shape the real zwatch returns (`/health` → `tipHeight`, `POST /accounts` →
+`accountId`, `/received` → `{ outputs: [{ txid, valueZat: "<string>", confirmations, … }] }`, `/balance` →
+`confirmedZat`). Three things to set when running it next to the desk:
+
+- **The token is mandatory.** zwatch refuses to start without `ZWATCH_API_TOKEN` (32+ characters). Set the same
+  value as the desk's `ZWATCH_TOKEN`.
+- **Port.** zwatch defaults to 8787, the desk's port. Run it with `ZWATCH_PORT=8790` (the desk's default `ZWATCH_URL`).
+- **Birthday is required.** zwatch rejects an account without one. The desk sends the tip from `/health`, which
+  zwatch answers with 503 until its first sync, so an escrow import fails until zwatch is ready. Start zwatch first.
+
+zwatch only accepts loopback `Host` headers and no `Origin`, so it must run on the same machine as the desk.
+Start it from the Ghostpass checkout with `node --import tsx zwatch/src/cli.ts`.
