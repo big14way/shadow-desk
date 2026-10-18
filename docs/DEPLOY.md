@@ -56,12 +56,12 @@ The judges' demo is a dry-run desk on Render's free plan, set up by `render.yaml
   so the demo starts empty.
 - With `ARBITER_TOKEN_HASH` and `ARBITER_BOX_PUBKEY` empty, every start prints a new arbiter link and evidence key in
   the Render logs. Set both (`pnpm arbiter token`, `pnpm arbiter box-keypair`) to get one link that survives restarts.
-- There is no nginx in front, so no rate limit, and Render's proxy sees visitor IP addresses. The desk itself still
-  logs none. The README says so next to the demo link.
+- There is no nginx in front, so no rate limit, and Render and its Cloudflare edge (`server: cloudflare`) see visitor
+  IP addresses. The desk itself still logs none. The README says so next to the demo link.
 
-Checked on 18 Oct 2026 with Render's settings (`NODE_ENV=production`, `PORT=10000`, a fresh clone):
-`scripts/demo-dispute.ts` drove a trade to a dispute, the arbiter API released it to the buyer, and the trade ended
-`RELEASED` with a `dryrun-` txid. Not yet run on Render itself.
+Live at <https://shadow-desk-demo.onrender.com> since 18 Oct 2026 (build 33 s). Checked there the same day:
+`scripts/demo-dispute.ts` drove a trade to a dispute, the arbiter API released it to the buyer with the fixed demo
+token, and the trade ended `RELEASED` with a `dryrun-` txid.
 
 ## Optional: an onion mirror
 
