@@ -1,0 +1,28 @@
+# The free hosted demo for the judges: a dry-run desk (mock zwatch and signing, no funds, no keys, Testnet
+# encodings). Render → New → Blueprint → this repo. Not for a real desk: that runs behind deploy/nginx-desk.conf.
+#
+# - Render sets NODE_ENV=production at runtime and the desk refuses dry run in production, so start:demo sets
+#   NODE_ENV=demo.
+# - Free instances sleep after 15 idle minutes (about a minute to wake) and lose the SQLite file when they do: the
+#   demo starts empty after every wake.
+# - Leave the ARBITER_* values empty and each start prints a fresh arbiter link and evidence key in the logs. To give
+#   the judges a link that survives restarts, set them from `pnpm arbiter token` and `pnpm arbiter box-keypair`.
+services:
+  - type: web
+    name: shadow-desk-demo
+    runtime: node
+    plan: free
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm build
+    startCommand: pnpm start:demo
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: "10000"
+      - key: ARBITER_TOKEN_HASH
+        sync: false
+      - key: ARBITER_BOX_PUBKEY
+        sync: false

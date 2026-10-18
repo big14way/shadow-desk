@@ -23,7 +23,9 @@ if (cfg.dryRun) {
   if (!cfg.arbiterTokenHash) {
     const token = newToken();
     cfg.arbiterTokenHash = hashToken(token);
-    banner.push(`Arbiter console:   http://${cfg.host}:${cfg.port}/admin#k=${token}`);
+    // On Render the public URL is in RENDER_EXTERNAL_URL; the bind address (0.0.0.0) is not a link anyone can open.
+    const origin = process.env.RENDER_EXTERNAL_URL ?? `http://${cfg.host}:${cfg.port}`;
+    banner.push(`Arbiter console:   ${origin}/admin#k=${token}`);
   }
   if (!cfg.arbiterBoxPubkey) {
     await sodium.ready;

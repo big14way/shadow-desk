@@ -91,6 +91,12 @@ it.
 
 ## Try it
 
+### Hosted demo
+
+_Link pending._ A dry-run desk on Render's free plan (docs/DEPLOY.md). It sleeps when idle, so the first visit can
+take about a minute, and it starts empty after every wake. Render's proxy sees visitor IP addresses; the desk logs
+none. A real desk runs behind `deploy/nginx-desk.conf`, which keeps no access log.
+
 ### Click through in 2 minutes (dry run)
 
 Needs Node.js ≥ 22.13 and pnpm (`corepack enable`).

@@ -45,6 +45,24 @@ sudo cp deploy/nginx-desk.conf /etc/nginx/sites-enabled/desk.conf && sudo certbo
 The service refuses to start with `DESK_DRY_RUN=1` under `NODE_ENV=production`, and refuses to start a real desk
 without `ZWATCH_URL`, `ARBITER_TOKEN_HASH` and `ARBITER_BOX_PUBKEY`.
 
+## The free hosted demo (Render)
+
+The judges' demo is a dry-run desk on Render's free plan, set up by `render.yaml`: Render → **New** → **Blueprint**
+→ this repo. It needs no tools, keys or funds. What the free plan means for it:
+
+- Render sets `NODE_ENV=production`, so the blueprint starts `pnpm start:demo`, which sets `NODE_ENV=demo`. Dry run
+  is still refused under `NODE_ENV=production`.
+- It sleeps after 15 idle minutes and takes about a minute to wake. The SQLite file is lost on every sleep or restart,
+  so the demo starts empty.
+- With `ARBITER_TOKEN_HASH` and `ARBITER_BOX_PUBKEY` empty, every start prints a new arbiter link and evidence key in
+  the Render logs. Set both (`pnpm arbiter token`, `pnpm arbiter box-keypair`) to get one link that survives restarts.
+- There is no nginx in front, so no rate limit, and Render's proxy sees visitor IP addresses. The desk itself still
+  logs none. The README says so next to the demo link.
+
+Checked on 18 Oct 2026 with Render's settings (`NODE_ENV=production`, `PORT=10000`, a fresh clone):
+`scripts/demo-dispute.ts` drove a trade to a dispute, the arbiter API released it to the buyer, and the trade ended
+`RELEASED` with a `dryrun-` txid. Not yet run on Render itself.
+
 ## Optional: an onion mirror
 
 Add a Tor hidden service pointing at `127.0.0.1:8787`. The desk serves only same-origin assets, so it works unchanged.

@@ -13,6 +13,7 @@
     "dev": "concurrently -k -n api,web -c yellow,cyan \"DESK_DRY_RUN=1 tsx watch src/server/main.ts\" \"vite\"",
     "build": "vite build",
     "start": "NODE_ENV=production tsx src/server/main.ts",
+    "start:demo": "NODE_ENV=demo DESK_DRY_RUN=1 tsx src/server/main.ts",
     "demo": "vite build && DESK_DRY_RUN=1 tsx src/server/main.ts",
     "arbiter": "tsx scripts/arbiter.ts",
     "spike": "bash scripts/spike-local.sh",
