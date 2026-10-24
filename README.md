@@ -1,8 +1,11 @@
 # Shadow Desk
 
+[![ci](https://github.com/big14way/shadow-desk/actions/workflows/ci.yml/badge.svg)](https://github.com/big14way/shadow-desk/actions/workflows/ci.yml)
+
 **A peer-to-peer ZEC desk where the price is public and the participants are not.**
 
-ZECATHON · Private Markets track · Video: _to be recorded (≤ 3 min, see [the plan](#three-minute-video))_
+ZECATHON 2026 · Private Markets track · **[Live demo](https://shadow-desk-demo-production.up.railway.app)** (dry run,
+no money) · **[2-minute video](https://youtu.be/m5Q5VG4VDP4)**
 
 - The seller's ZEC sits in a **FROST 2-of-3 escrow** shared by buyer, seller and an arbiter.
 - Every escrow is a fresh shielded address that looks like any other on-chain.
@@ -10,6 +13,11 @@ ZECATHON · Private Markets track · Video: _to be recorded (≤ 3 min, see [the
 - After each trade the desk publishes only **the price, a size range and an hour**, after a random delay.
 
 ## The problem
+
+My uncle sells building materials in Nigeria. Last year he bought crypto from a P2P seller with the money he had saved
+to relocate; the seller took the payment and vanished. P2P traders carry two risks: a counterparty who can run, and a
+platform that keeps their ID, bank account and every trade. Shadow Desk removes both: the seller's ZEC is locked before
+the buyer pays, and the desk never holds anyone's identity or bank details.
 
 P2P desks see everything. To sell 0.01 ZEC for naira on a typical P2P platform, you hand the platform your name, your
 bank account and your trade history. The platform also holds the coins while you wait, and its multisig escrow sits on
@@ -88,6 +96,17 @@ are the next step (docs/SPIKE.md, part 2). What *has* run with the real tools, w
 identities, a 2-of-3 RedPallas DKG, `zcash-sign generate`, and two complete FROST signing sessions (buyer + seller,
 arbiter + buyer) over a real Ironwood v6 PCZT. Their output is in `fixtures/spike/`, and every parser is tested against
 it.
+
+## Video
+
+**<https://youtu.be/m5Q5VG4VDP4>** (1:59)
+
+| Time | Shows |
+|---|---|
+| 0:00 | The problem, through my uncle's story |
+| 0:25 | One trade on the dry-run desk: offer, take, FROST key generation, escrow funded, bank details by encrypted memo, "I've paid", a silent seller, a dispute with sealed evidence, the arbiter's release, the public tape |
+| 1:29 | The FROST spike with the real tools, and CI |
+| 1:48 | Links |
 
 ## Try it
 
@@ -168,18 +187,6 @@ pnpm spike        # the no-funds FROST spike with the real tools
 - **Value cap.** A release pays exactly the amount; no settlement ever moves more than amount + fee.
 - **Corrections to the build guide** found while building: `zcash-sign generate` takes `-n`/`--network`, not
   `--net`; `frost-client coordinator -o` writes the signature to a file, so the worker needs no output parsing for it.
-
-## Three-minute video
-
-| Time | Show |
-|---|---|
-| 0:00–0:20 | The problem: P2P desks see everything; multisig escrow on transparent chains is public |
-| 0:20–0:50 | Post an offer; take it in a second browser (Tor) |
-| 0:50–1:30 | Three terminals: the DKG; the seller generates the escrow and funds it from Zodl; the desk shows `FUNDED` |
-| 1:30–1:50 | Bank details arrive as an encrypted memo in the buyer's Zodl |
-| 1:50–2:20 | "I've paid"; "Received"; verify-before-sign; 2-of-3 signing; txid |
-| 2:20–2:40 | Dispute clip: arbiter + buyer release |
-| 2:40–3:00 | Explorer: ordinary shielded transactions. Tape: price only. The leak table |
 
 ## Repository
 
