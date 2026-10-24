@@ -93,14 +93,16 @@ it.
 
 ### Hosted demo
 
-**<https://shadow-desk-demo.onrender.com>**: a dry-run desk on Render's free plan (docs/DEPLOY.md). It sleeps when
-idle, so the first visit can take about a minute, and it starts empty after every wake. Render and its Cloudflare edge
-see visitor IP addresses; the desk logs none. A real desk runs behind `deploy/nginx-desk.conf`, which keeps no access
-log.
+**<https://shadow-desk-demo-production.up.railway.app>**: a dry-run desk on Railway (docs/DEPLOY.md). It stays
+awake, and it starts empty after every redeploy. Railway's proxy sees visitor IP addresses; the desk logs none. A real
+desk runs behind `deploy/nginx-desk.conf`, which keeps no access log.
+
+Mirror: <https://shadow-desk-demo.onrender.com>, on Render's free plan. It sleeps when idle (the first visit can take
+about a minute), and Render has suspended it until 1 Nov 2026 because the workspace used up October's free hours.
 
 ### Click through in 2 minutes (dry run)
 
-Needs Node.js ≥ 22.13 and pnpm (`corepack enable`).
+Needs Node.js 24 (22.23 also works; 22.13 does not) and pnpm (`corepack enable`).
 
 ```bash
 git clone https://github.com/big14way/shadow-desk && cd shadow-desk

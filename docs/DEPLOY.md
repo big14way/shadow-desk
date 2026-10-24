@@ -14,7 +14,8 @@ cargo install --git https://github.com/zcash/zcash-devtool.git --rev 5a26ee854e6
 sudo install ~/.cargo/bin/{frostd,frost-client,zcash-sign,zcash-devtool} /usr/local/bin/
 ```
 
-Node.js 22.13 or newer (the desk uses the built-in `node:sqlite`), and `corepack enable` for pnpm.
+Node.js 24 (the desk uses the built-in `node:sqlite`; 22.23 also works, but 22.13 fails on one of its queries), and
+`corepack enable` for pnpm.
 
 ## frostd
 
@@ -45,6 +46,22 @@ sudo cp deploy/nginx-desk.conf /etc/nginx/sites-enabled/desk.conf && sudo certbo
 The service refuses to start with `DESK_DRY_RUN=1` under `NODE_ENV=production`, and refuses to start a real desk
 without `ZWATCH_URL`, `ARBITER_TOKEN_HASH` and `ARBITER_BOX_PUBKEY`.
 
+## The hosted demo (Railway)
+
+The judges' demo has run on Railway since 24 Oct 2026, after Render suspended its free services for the rest of
+October; the Render service below is now the mirror. It was deployed with `railway up` from a clean clone, so pushes
+don't redeploy it. Railpack builds it and reads Node 24 from `.nvmrc`. Service variables:
+
+- `RAILPACK_START_CMD=pnpm start:demo`. Otherwise Railpack runs `pnpm start`, a real desk, which refuses to start
+  without zwatch.
+- `HOST=0.0.0.0`. Railway sets `PORT`.
+- `ARBITER_TOKEN_HASH` and `ARBITER_BOX_PUBKEY`, as for Render below.
+
+It stays awake, and the SQLite file is lost on every redeploy. Railway's proxy sees visitor IP addresses; the desk logs
+none. Checked on 24 Oct 2026: `scripts/demo-dispute.ts` drove a trade to a dispute, the arbiter API released it to
+the buyer, and the trade ended `RELEASED` with a `dryrun-` txid. The first deploy ran Node 22.13.1, from the old
+`.nvmrc`, and failed in `reserveOffer` with `column index out of range`; hence the pin to 24.
+
 ## The free hosted demo (Render)
 
 The judges' demo is a dry-run desk on Render's free plan, set up by `render.yaml`: Render → **New** → **Blueprint**
@@ -61,7 +78,8 @@ The judges' demo is a dry-run desk on Render's free plan, set up by `render.yaml
 
 Live at <https://shadow-desk-demo.onrender.com> since 18 Oct 2026 (build 33 s). Checked there the same day:
 `scripts/demo-dispute.ts` drove a trade to a dispute, the arbiter API released it to the buyer with the fixed demo
-token, and the trade ended `RELEASED` with a `dryrun-` txid.
+token, and the trade ended `RELEASED` with a `dryrun-` txid. On 19 Oct Render suspended it, with every other free
+service in the workspace, because the workspace had used up October's free hours; it comes back on 1 Nov.
 
 ## Optional: an onion mirror
 
